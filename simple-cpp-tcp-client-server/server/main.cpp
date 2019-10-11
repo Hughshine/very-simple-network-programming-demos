@@ -49,17 +49,37 @@ int main() {
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(s_addr);
     server_addr.sin_port = htons(12003);
-    bind(s, (struct sockaddr *) &server_addr, sizeof(server_addr));
-    listen(s, i_port);
+    int bind_code = -1;
 
+    for(int i=0;i<10 ;i++) {
+        cout<<" --------- Trying to bind socket, attempts: "<< i+1<<"/10. --------- "<<endl;
+        bind_code = bind(s, (struct sockaddr *) &server_addr, sizeof(server_addr));
+        if (bind_code == 0)  {
+            cout<<" --------- Bind success!!! --------- "<<endl;
+            break;
+        } 
+        cout<<"error code: "<<errno<<endl;  // 48就是already in use的意思
+        sleep(1);
+    }
+
+    if (bind_code != 0)
+    {
+        cout<<" --------- Bind failed... --------- "<<endl;
+        // cout<<"error code: "<<errno<<endl;  // 48就是already in use的意思；sleep()是不是也会改变errno呀。。
+        cout<<"bind code: "<<bind_code<<endl;
+        return 0;
+    }
+    int listen_code = listen(s, i_port);
+    cout<<"listen code: "<<listen_code<<endl;  // 不知道什么时候监听会失败。
+    cout<<" --------- start listening --------- \n";
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
     int clnt_sock;
-
     char read_buffer[64] = "";
 
     while (true) {
         clnt_sock = accept(s, (struct sockaddr *) &clnt_addr, &clnt_addr_size);
+        cout<<"clnt_sock: "<< clnt_sock<<endl;
         recv(clnt_sock, read_buffer, 64, 0);
         cout<<"Read Buffer: "<< read_buffer<<endl;
         string ret = "";
