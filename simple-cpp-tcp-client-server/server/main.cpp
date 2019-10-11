@@ -10,13 +10,6 @@
 #include <ctime>
 #include <time.h>
 using namespace std;
-/*
-服务端接受 Date 或 Time, 返回客户端日期（年月日）或（时分秒）
- */
-
-/*
- * references https://blog.csdn.net/u011467458/article/details/52585457
- */
 
 void error(const char *m){
     perror(m);
@@ -28,10 +21,7 @@ const std::string currentDate() {
     struct tm  tstruct;
     char       buf[80];
     tstruct = *localtime(&now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
     strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
-
     return buf;
 }
 
@@ -40,10 +30,7 @@ const std::string currentTime() {
     struct tm  tstruct;
     char       buf[80];
     tstruct = *localtime(&now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
     strftime(buf, sizeof(buf), "%H:%M:%S", &tstruct);
-
     return buf;
 }
 
@@ -55,6 +42,7 @@ int main() {
     printf("Create socket\n");
     int s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (s < 0) { error("socket()"); }
+    cout<<"socket: "<<s<<endl;
 
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
@@ -67,22 +55,32 @@ int main() {
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
     int clnt_sock;
+
+    char read_buffer[64] = "";
+
     while (true) {
         clnt_sock = accept(s, (struct sockaddr *) &clnt_addr, &clnt_addr_size);
-        cout << clnt_sock << endl;
+        recv(clnt_sock, read_buffer, 64, 0);
+        cout<<"Read Buffer: "<< read_buffer<<endl;
+        string ret = "";
+        if(!strcmp(read_buffer, "Date")) {
+            ret = currentDate();
+        }else if(!strcmp(read_buffer, "Time")) {
+            ret = currentTime();
+        }else {
+            ret = "Sorry, wrong command.";
+        }
 //向客户端发送数据
-        string ret = currentDate() + " "+ currentTime();
         const char* str = ret.c_str();
-        cout<<"current time:"<<str<<endl;
+        cout<<"callback: "<<str<<endl;
         cout<< "sizeof(str): "<<strlen(str)<<endl;
-        write(clnt_sock, str, strlen(str));
+        write(clnt_sock, str, strlen(str)+1);
+        close(clnt_sock);
     }
 
 //关闭套接字
-//    close(clnt_sock);
-//    close(s);
-//
-//    printf("Connect success!\n");
-//    close(s);
-//    return 0;
+   close(clnt_sock);
+   close(s);
+   cout<<" --- Bye --- \n";
+   return 0;
 }

@@ -1,8 +1,10 @@
 #include <iostream>
+#include <exception>
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -15,9 +17,9 @@ using namespace std;
 /*
  * references https://blog.csdn.net/u011467458/article/details/52585457
  */
+
 void error(const char *m){
 	perror(m);
-	exit(0);
 }
    
 int main()
@@ -37,14 +39,39 @@ int main()
 	server_addr.sin_port = htons(i_port);
 
 	cout<<"Trying connect\n";
-    if (connect(s, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-    	error("connect()");
-    }
-    cout<<"sizeof(buffer)-1: "<<sizeof(buffer)-1<<endl;
-//	recv(s, buffer, sizeof(buffer)-1, 0);
-    recv(s, buffer, 512, 0);
-	cout<<"Message form server: "<< buffer<<endl;
-    cout<<"Connect success!"<<endl;
-    close(s);
+
+    while(true) {
+    	string cmd = ""; // "Date" or "Time"
+		cout<<"Key in your cmd to the server: ";
+		cin>>cmd;
+
+    	while(true) {
+	    	try {
+	    		s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	    		if (connect(s, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+	    			throw "Somthing wrong... \n";
+	    		}
+	    		break;
+	    	} catch(char const* s) {
+
+	    		cout<<s<<"Retry? y/n:";
+	    		string str = "";
+	    		cin>>str;
+	    		if (str == "y")
+	    		{
+	    			cout<<"Retrying...\n";
+	    			continue;
+	    		} else {
+	    			cout<<"Exiting...\n";
+	    			break;
+	    		}
+	    	}
+	    }
+
+	    write(s, cmd.c_str(), strlen(cmd.c_str())+1);
+	    recv(s, buffer, 512, 0);
+		cout<<"Message form server: "<<buffer<<endl;
+		close(s);
+	}
 	return 0;
 }
