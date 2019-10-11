@@ -2,7 +2,7 @@ from socket import *
 
 class TCPServer:
 
-    def __init__(self, serverPort=12002):
+    def __init__(self, serverPort=13002):
         self.serverPort = serverPort
         self.serverSocket = socket(AF_INET, SOCK_STREAM)
 
