@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "client.h"
 using namespace std;
 /*
 服务端接受 Date 或 Time, 返回客户端日期（年月日）或（时分秒）
@@ -22,56 +23,33 @@ void error(const char *m){
 	perror(m);
 }
    
-int main()
+int main(int argc,char *argv[]) //增加可以读取terminal参数
 {
-	char buffer[512] = "";
-    const char *s_addr = "127.0.0.1";
-	int i_port = 12003;
+	string ip = "127.0.0.1";
+	unsigned int port = 12003;
+	client c = client("127.0.0.1", 12003);
+	if (argc == 3)
+	{
+		string ip(argv[1]); // 检查，或者报错
+		int port = atoi(argv[2]); // TODO: 增加检查
+		c.reset(ip, port);  //
+	} else if(argc != 1) {
+		cout<<" ------------- wrong args format ------------ "<<endl;
+		cout<<" --------- usage: ./client.out <ip> <port> -------- "<<endl;
+		cout<<" ------ using default: 127.0.0.1:12003 ------ "<<endl;
+	} else
+		cout<<"ip: "<<ip<<"; port: "<<port<<endl;
 
-	cout<<"Create socket\n";
-	int s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (s < 0) { error("socket()"); }
-	
-	struct sockaddr_in server_addr;
-	memset(&server_addr, 0, sizeof(server_addr));
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr(s_addr);
-	server_addr.sin_port = htons(i_port);
-
-	cout<<"Trying connect\n";
-
-    while(true) {
-    	string cmd = ""; // "Date" or "Time"
+	//EOF (Ctrl + D 结束运行。)
+	while(true) {
 		cout<<"Key in your cmd to the server: ";
+		string cmd;
 		cin>>cmd;
-
-    	while(true) {
-	    	try {
-	    		s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	    		if (connect(s, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-	    			throw "Somthing wrong... \n";
-	    		}
-	    		break;
-	    	} catch(char const* s) {
-
-	    		cout<<s<<"Retry? y/n:";
-	    		string str = "";
-	    		cin>>str;
-	    		if (str == "y")
-	    		{
-	    			cout<<"Retrying...\n";
-	    			continue;
-	    		} else {
-	    			cout<<"Exiting...\n";
-	    			break;
-	    		}
-	    	}
-	    }
-
-	    write(s, cmd.c_str(), strlen(cmd.c_str())+1);
-	    recv(s, buffer, 512, 0);
-		cout<<"Message form server: "<<buffer<<endl;
-		close(s);
+		if (cmd == "")
+		{
+			cout<<"EOF, exiting...\n";
+			return 0;
+		}
+		c.sendCmd(cmd);
 	}
-	return 0;
 }
