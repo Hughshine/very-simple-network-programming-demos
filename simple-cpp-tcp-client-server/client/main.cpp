@@ -12,17 +12,9 @@
 #include "client.h"
 using namespace std;
 /*
-服务端接受 Date 或 Time, 返回客户端日期（年月日）或（时分秒）
- */
-
-/*
+ * 服务端接受 Date 或 Time, 返回客户端日期（年月日）或（时分秒）
  * references https://blog.csdn.net/u011467458/article/details/52585457
  */
-
-void error(const char *m){
-	perror(m);
-}
-   
 int main(int argc,char *argv[]) //增加可以读取terminal参数
 {
 	string ip = "127.0.0.1";
@@ -34,12 +26,12 @@ int main(int argc,char *argv[]) //增加可以读取terminal参数
 		int port = atoi(argv[2]); // TODO: 增加检查
 		c.reset(ip, port);  //
 	} else if(argc != 1) {
-		cout<<" ------------- wrong args format ------------ "<<endl;
-		cout<<" --------- usage: ./client.out <ip> <port> -------- "<<endl;
-		cout<<" ------ using default: 127.0.0.1:12003 ------ "<<endl;
-	} else
-		cout<<"ip: "<<ip<<"; port: "<<port<<endl;
-
+		string name(argv[0]);
+		cout<<" ------------- Wrong args format ------------ "<<endl;
+        cout<<" ------- Usage: "<<name<<" <ip> <port> ------ "<<endl;
+        cout<<" ---------  Now, using default config-------- "<<endl;
+	} 
+		cout<<"Client will serve at ip: "<<ip<<", with target port: "<<port<<endl;
 	//EOF (Ctrl + D 结束运行。)
 	while(true) {
 		cout<<"Key in your cmd to the server: ";
