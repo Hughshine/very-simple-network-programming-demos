@@ -31,17 +31,15 @@ cd ./client  # or ./server
 
 ## TODO
 
-- [ ] 封装
+- [x] 封装
 
-    > exception
+- [x] 拓展client，可以选择ip，port
 
-- [ ] 拓展client，可以选择ip，port
+- [x] 拓展server，可以选择bind的port
 
-- [ ] 拓展server，可以选择bind的port
+- [x] simple cli.
 
-- [ ] 通过cli控制server/client【可以不允许有多个client】的启停，配置改变，log查看等。
-
-    > 可能需要查找进程。
+- [ ] 没有封装exception，没有输入参数检查，没有文件存取，生硬的程序结束方式。
 
 ## 遇到的问题
 
@@ -74,6 +72,16 @@ cd ./client  # or ./server
 		ENOTSOCK    参数sockfd不是套接字。
 		EOPNOTSUPP   参数sockfd不是支持listen操作的套接字类型。
 	```
+
+7. （linux/mac下）server读取client的发起ip，port。
+
+```
+clnt_sock = accept(s, (struct sockaddr *) &clnt_addr, &clnt_addr_size);
+char client_ip[INET_ADDRSTRLEN];
+inet_ntop(AF_INET,&(clnt_addr.sin_addr), client_ip, sizeof(client_ip)); // client_ip is char[]
+cout<<"Client IP: "<< client_ip<<endl;
+cout<<"Client port: "<< clnt_addr.sin_port<<endl;
+```
 
 ## 还没有解决的问题
 
