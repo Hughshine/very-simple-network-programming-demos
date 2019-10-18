@@ -27,7 +27,7 @@ cd ./client  # or ./server
 
    > client随机选一个端口就好，只有server需要有一个确定的端口，并且保持被动地监听。
 
-![Client Server Model](https://i.stack.imgur.com/8oKPE.gif)
+![Client Server Model](./tcp.gif)
 
 ## TODO
 
