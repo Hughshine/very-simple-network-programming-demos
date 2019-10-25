@@ -5,7 +5,7 @@ client::client(string target_ip, unsigned target_port){
 }
 
 int client::createSocket(){
-		// Create socket at a random port.
+	// Create socket at a random port.
 	this->s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (s < 0) { error("socket()"); }
 	return 0;

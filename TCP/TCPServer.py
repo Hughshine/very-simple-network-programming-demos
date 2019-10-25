@@ -13,7 +13,7 @@ class TCPServer:
         print('start receiving... :')
         while True:
             connectionSocket, addr = self.serverSocket.accept()
-            sentence = connectionSocket.recv(2014)
+            sentence = connectionSocket.recv(2048)
             modified = sentence.upper()
             connectionSocket.send(modified)
             print(self.serverSocket)
