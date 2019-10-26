@@ -1,9 +1,4 @@
 #include "server.h"
-// string ip;
-// int bind_port;
-// struct sockaddr_in server_addr;
-// char* buffer;
-// 	int s;//socket
 
 server::server(string ip, unsigned bind_port){
 	set(ip, bind_port);
@@ -21,6 +16,7 @@ int server::bindSocket(){
 	this->bind_success = !testBind(10);
 	return bind_success;
 };
+
 int server::listen(){
 	if(!bind_success) {
 		cout<<" --------- Please bind your socket first! --------- \n";
@@ -31,12 +27,13 @@ int server::listen(){
     cout<<" --------- start listening --------- \n";
     return listen_code;
 }
+
 int server::dealWithRequests()
 {
 	struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
     int clnt_sock;
-     
+
     while (true) {
         clnt_sock = accept(s, (struct sockaddr *) &clnt_addr, &clnt_addr_size);
         char client_ip[INET_ADDRSTRLEN];
@@ -135,5 +132,10 @@ void server::error(const char *m)
 {
 	perror(m);
 	exit(0);
+}
+
+int server::dealWithRequests()
+{
+	
 }
 
