@@ -1,6 +1,6 @@
 # 上机作业2：编写SMTP服务器并观察通信过程
 
-> 在github上查看此项目。
+> 在[github](https://github.com/Hughshine/very-simple-network-programming-demos/blob/master/simple-smtp-server/report.md)上查看此报告。
 
 Table of Contents
 =================
