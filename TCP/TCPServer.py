@@ -2,7 +2,7 @@ from socket import *
 
 class TCPServer:
 
-    def __init__(self, serverPort=13002):
+    def __init__(self, serverPort=13003):
         self.serverPort = serverPort
         self.serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -14,9 +14,10 @@ class TCPServer:
         while True:
             connectionSocket, addr = self.serverSocket.accept()
             sentence = connectionSocket.recv(2048)
-            modified = sentence.upper()
-            connectionSocket.send(modified)
-            print(self.serverSocket)
+            # modified = sentence.upper()
+            print(sentence)
+            connectionSocket.send("250 OK")
+            # print(self.serverSocket)
             print(connectionSocket)
             # sentence = connectionSocket.recv(2014)
             # modified = sentence.upper()

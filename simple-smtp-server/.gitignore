@@ -1,0 +1,6 @@
+mails/
+main.dSYM
+main.dSYM/
+main
+node_modules/
+package-lock.json
