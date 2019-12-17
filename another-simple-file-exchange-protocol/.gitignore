@@ -1,0 +1,8 @@
+client.sh
+server.sh
+./server/user/test/*
+./client/user/test/*
+./common/pch.h.gch
+./client/main
+./server/main
+README.html
